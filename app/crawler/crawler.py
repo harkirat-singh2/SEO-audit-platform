@@ -13,10 +13,6 @@ from app.crawler.url_utils import (
     normalize_url,
 )
 from app.schemas import PageData
-import logging
-
-logger = logging.getLogger(__name__)
-
 
 class WebsiteCrawler:
     """
