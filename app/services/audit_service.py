@@ -1,26 +1,20 @@
 import logging
-
+from app.database import 
 logger = logging.getLogger(__name__)
+
 
 class AuditService:
 
-    def start_audit(self, url):
-        """
-        Start a new website audit.
-        Returns an audit identifier.
-        """
+    def __init__(
+        self,
+        db: Session,
+    ):
+        self.db = db
 
-    def get_status(self, audit_id):
-        """
-        Return current audit progress.
-        """
+        self.crawler = WebsiteCrawler
 
-    def get_results(self, audit_id):
-        """
-        Return completed audit results.
-        """
+        self.analyzer = SEOAnalyzer()
 
-    def generate_report(self, audit_id):
-        """
-        Generate downloadable report.
-        """
+        self.recommendation_service = RecommendationService()
+
+        self.pdf_generator = PDFGenerator()
