@@ -15,10 +15,10 @@ from app.repositories.page_repository import PageRepository
 from app.repositories.seo_repository import SEORepository
 from app.repositories.recommendation_repository import RecommendationRepository
 
+
 class AuditService:
-    """
-    Coordinates the complete SEO audit workflow.
-    """
+    """Coordinates the complete SEO audit workflow."""
+
     def __init__(self, db: Session):
         self.db = db
         self.analyzer = SEOAnalyzer()
@@ -29,9 +29,7 @@ class AuditService:
         self.recommendation_repository = RecommendationRepository(db)
 
     def run_audit(self, url: str, max_pages: int = 100):
-        """
-        Crawl a website, analyze each page, and generate AI recommendations.
-        """
+        """Crawl a website, analyze each page, and generate AI recommendations."""
         try:
             logger.info("Starting audit for %s", url)
             audit = Audit(
@@ -48,8 +46,8 @@ class AuditService:
             )
             pages = crawler.crawl()
             logger.info("Crawled %d pages", len(pages))
-
             results = []
+
             for index, page in enumerate(pages):
                 page_model = Page(
                     audit_id=audit.id,
@@ -57,7 +55,9 @@ class AuditService:
                     http_status=200,
                 )
                 self.page_repository.create(page_model)
-                logger.info("Saved page '%s' with ID %d", page.url, page_model.id)
+                logger.info(
+                    "Saved page '%s' with ID %d", page.url, page_model.id
+                )
 
                 logger.info("Analyzing page: %s", page.url)
                 seo_result = self.analyzer.analyze(page)
@@ -79,22 +79,30 @@ class AuditService:
                     has_canonical=seo_result.has_canonical,
                     canonical_url=seo_result.canonical_url,
                     robots_meta=(
-                        str(seo_result.robots_meta) if seo_result.robots_meta else None
+                        str(seo_result.robots_meta)
+                        if seo_result.robots_meta
+                        else None
                     ),
                     language=seo_result.language,
                     seo_score=seo_result.seo_score,
                 )
                 self.seo_repository.create(analysis)
                 logger.info(
-                    "Saved SEO analysis for page ID %d", page_model.id,
+                    "Saved SEO analysis for page ID %d",
+                    page_model.id,
                 )
 
                 recommendation = None
                 if index < settings.MAX_AI_RECOMMENDATIONS:
                     logger.info("Generating AI recommendations")
-                    recommendation = self.recommendation_service.generate(seo_result)
+                    recommendation = self.recommendation_service.generate(
+                        seo_result
+                    )
                 else:
-                    logger.info("Skipping AI recommendation for %s (limit reached)", page.url)
+                    logger.info(
+                        "Skipping AI recommendation for %s (limit reached)",
+                        page.url,
+                    )
 
                 if recommendation is not None:
                     recommendation_model = Recommendation(
@@ -122,7 +130,8 @@ class AuditService:
                         recommendation_model,
                     )
                     logger.info(
-                        "Saved AI recommendations for page ID %d", page_model.id,
+                        "Saved AI recommendations for page ID %d",
+                        page_model.id,
                     )
 
                 results.append(
@@ -140,12 +149,16 @@ class AuditService:
 
             # Fix 1: Commit everything within the success block using repository
             self.audit_repository.commit()
+
             return {
                 "audit_id": audit.id,
                 "results": results,
             }
+
         except Exception as e:
             # Fix 1: Rollback transaction on failure using repository
-            logger.error("Audit failed for %s. Rolling back. Error: %s", url, str(e))
+            logger.error(
+                "Audit failed for %s. Rolling back. Error: %s", url, str(e)
+            )
             self.audit_repository.rollback()
             raise

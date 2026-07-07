@@ -1,24 +1,17 @@
 from pathlib import Path
 
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import (
-    Paragraph,
-    SimpleDocTemplate,
-)
+from reportlab.platypus import SimpleDocTemplate
+
+from app.reports.pdf_builder import build_story
 
 
 class PDFService:
-    """
-    Generates SEO Audit PDF reports.
-    """
 
     def generate(
         self,
+        result,
         filename: str,
     ) -> str:
-        """
-        Create a simple PDF.
-        """
 
         output = Path(filename)
 
@@ -26,23 +19,7 @@ class PDFService:
             str(output),
         )
 
-        styles = getSampleStyleSheet()
-
-        story = []
-
-        story.append(
-            Paragraph(
-                "AI SEO Audit Report",
-                styles["Title"],
-            )
-        )
-
-        story.append(
-            Paragraph(
-                "Generated Successfully!",
-                styles["Normal"],
-            )
-        )
+        story = build_story(result)
 
         document.build(story)
 
