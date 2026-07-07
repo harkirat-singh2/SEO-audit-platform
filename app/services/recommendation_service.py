@@ -1,5 +1,5 @@
 import json
-
+from google.genai.errors import ClientError
 from app.schemas import (
     RecommendationResult,
     SEOResult,
@@ -139,15 +139,41 @@ class RecommendationService:
         return RecommendationResult(**data)
 
     def generate(
-        self,
-        result: SEOResult,
-    ) -> RecommendationResult:
+    self,
+    result: SEOResult,
+) -> RecommendationResult:
         """
         Generate AI-powered SEO recommendations.
         """
 
         prompt = self.build_prompt(result)
 
-        response = self.llm.generate(prompt ,RECOMMENDATION_SCHEMA)
+        try:
+            response = self.llm.generate(
+                prompt=prompt,
+                response_schema=RECOMMENDATION_SCHEMA,
+            )
 
-        return self.parse_response(response)
+            return self.parse_response(response)
+
+        except ClientError as exc:
+            logger.error(
+                "Gemini API error: %s",
+                exc,
+            )
+
+        except Exception:
+            logger.exception(
+                "Unexpected error while generating recommendations."
+            )
+
+        return RecommendationResult(
+            meta_title="AI recommendation unavailable.",
+            meta_description="AI recommendation unavailable.",
+            heading_structure="AI recommendation unavailable.",
+            image_alt_text_recommendation="AI recommendation unavailable.",
+            link_recommendation="AI recommendation unavailable.",
+            page_speed_suggestion="AI recommendation unavailable.",
+            mobile_optimization_suggestion="AI recommendation unavailable.",
+            crawl_delay_suggestion="AI recommendation unavailable.",
+        )
