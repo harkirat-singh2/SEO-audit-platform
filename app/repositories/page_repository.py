@@ -1,30 +1,14 @@
+from sqlalchemy.orm import Session
+
 from app.models.page import Page
-from app.repositories.base_repository import BaseRepository
 
 
-class PageRepository(BaseRepository):
-    """
-    Handles database operations for pages.
-    """
+class PageRepository:
 
-    def create(
-        self,
-        page: Page,
-    ) -> Page:
+    def __init__(self, db: Session):
+        self.db = db
 
+    def create(self, page: Page) -> Page:
         self.db.add(page)
-        self.db.commit()
-        self.db.refresh(page)
-
+        self.db.flush()
         return page
-
-    def get_by_audit(
-        self,
-        audit_id: int,
-    ) -> list[Page]:
-
-        return (
-            self.db.query(Page)
-            .filter(Page.audit_id == audit_id)
-            .all()
-        )

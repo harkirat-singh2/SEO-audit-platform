@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     DEBUG: bool
 
     DATABASE_URL: str
-    MAX_AI_RECOMMENDATIONS: int = 3
+    MAX_AI_RECOMMENDATIONS: int = 1
     GEMINI_MODEL: str = "gemini-2.5-flash"
     GEMINI_API_KEY: str
 

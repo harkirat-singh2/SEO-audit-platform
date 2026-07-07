@@ -1,8 +1,12 @@
-from app.models import Recommendation
-from app.repositories.base_repository import BaseRepository
+from sqlalchemy.orm import Session
+
+from app.models.recommendation import Recommendation
 
 
-class RecommendationRepository(BaseRepository):
+class RecommendationRepository:
+
+    def __init__(self, db: Session):
+        self.db = db
 
     def create(
         self,
@@ -10,7 +14,6 @@ class RecommendationRepository(BaseRepository):
     ) -> Recommendation:
 
         self.db.add(recommendation)
-        self.db.commit()
-        self.db.refresh(recommendation)
+        self.db.flush()
 
         return recommendation

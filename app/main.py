@@ -1,24 +1,18 @@
-from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 
-from app.api.health import router
-from app.core.config import settings
-from app.database.init_db import init_db
-from app.core.logger import logger
-
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    logger.info("Initializing database...")
-    init_db()
-    logger.info("Database initialized successfully.")
-    yield
-
+from app.api.router import router
 
 app = FastAPI(
-    title=settings.APP_NAME,
-    version=settings.APP_VERSION,
-    lifespan=lifespan,
+    title="AI SEO Audit Platform",
+    version="1.0.0",
+    description="AI-powered Website SEO Audit Platform",
 )
 
 app.include_router(router)
+
+
+@app.get("/")
+def root():
+    return {
+        "message": "AI SEO Audit Platform",
+    }
