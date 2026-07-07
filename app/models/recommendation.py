@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, ForeignKey, Text
+from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
@@ -17,27 +17,42 @@ class Recommendation(Base):
         nullable=False,
     )
 
-    seo_issues: Mapped[str | None] = mapped_column(
+    meta_title: Mapped[str | None] = mapped_column(
+        String(255),
+        nullable=True,
+    )
+
+    meta_description: Mapped[str | None] = mapped_column(
+        String(500),
+        nullable=True,
+    )
+
+    heading_structure: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
 
-    improvement_suggestions: Mapped[str | None] = mapped_column(
+    image_alt_text_recommendation: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
 
-    suggested_title: Mapped[str | None] = mapped_column(
+    link_recommendation: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
 
-    suggested_meta_description: Mapped[str | None] = mapped_column(
+    page_speed_suggestion: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )
 
-    content_recommendations: Mapped[str | None] = mapped_column(
+    mobile_optimization_suggestion: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+    )
+
+    crawl_delay_suggestion: Mapped[str | None] = mapped_column(
         Text,
         nullable=True,
     )

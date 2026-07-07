@@ -2,6 +2,10 @@ from app.database.session import SessionLocal
 from app.services.audit_service import AuditService
 
 
+URL = "https://quotes.toscrape.com/"
+MAX_PAGES = 5
+
+
 def main():
     db = SessionLocal()
 
@@ -9,16 +13,18 @@ def main():
         service = AuditService(db)
 
         results = service.run_audit(
-            "https://books.toscrape.com/",
+            URL,max_pages=MAX_PAGES
         )
 
-        first = results[0]
-
         print(f"Pages Audited: {len(results)}")
-        print(f"SEO Score: {first.seo.seo_score}")
 
-        if first.recommendation:
-            print(first.recommendation.meta_description)
+        if results:
+            first = results[0]
+
+            print(f"SEO Score: {first.seo.seo_score}")
+
+            if first.recommendation:
+                print(first.recommendation.meta_description)
 
     finally:
         db.close()

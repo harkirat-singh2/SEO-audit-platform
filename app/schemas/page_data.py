@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 class PageData:
     url: str
     html: str
+    status_code: int
     soup: BeautifulSoup
     links: list[str]
     status_code: int

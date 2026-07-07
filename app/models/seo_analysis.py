@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import (
     Boolean,
     DateTime,
-    Float,
     ForeignKey,
     Integer,
     String,
@@ -24,19 +23,87 @@ class SEOAnalysis(Base):
         nullable=False,
     )
 
+    # Title
     title: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
     )
 
+    title_length: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    # Meta Description
     meta_description: Mapped[str | None] = mapped_column(
         String(500),
         nullable=True,
     )
 
-    h1: Mapped[str | None] = mapped_column(
-        String(255),
-        nullable=True,
+    meta_description_length: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    # Content
+    word_count: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    # Headings
+    h1_count: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    h2_count: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    total_headings: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    # Images
+    total_images: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    images_without_alt: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    # Links
+    internal_links: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    external_links: Mapped[int] = mapped_column(
+        Integer,
+        default=0,
+        nullable=False,
+    )
+
+    # Canonical
+    has_canonical: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False,
     )
 
     canonical_url: Mapped[str | None] = mapped_column(
@@ -44,61 +111,23 @@ class SEOAnalysis(Base):
         nullable=True,
     )
 
+    # Robots
     robots_meta: Mapped[str | None] = mapped_column(
         String(255),
         nullable=True,
     )
 
-    structured_data: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-        nullable=False,
-    )
-
-    broken_links: Mapped[int] = mapped_column(
-        Integer,
-        default=0, 
-        nullable=False,
-    )
-
-    heading_structure_score: Mapped[int] = mapped_column(
-        Integer,
-        default=0,
-        nullable=False,
-    )
-
-    image_alt_count: Mapped[int] = mapped_column(
-        Integer,
-        default=0,
-        nullable=False,
-    )
-
-    word_count: Mapped[int] = mapped_column(
-        Integer,
-        default=0,
-        nullable=False,
-    )
-
-    readability_score: Mapped[float | None] = mapped_column(
-        Float,
+    # Language
+    language: Mapped[str | None] = mapped_column(
+        String(50),
         nullable=True,
     )
 
-    duplicate_content: Mapped[bool] = mapped_column(
-        Boolean,
-        default=False,
-        nullable=False,
-    )
-
-    internal_links: Mapped[int] = mapped_column(
+    # Final Score
+    seo_score: Mapped[int] = mapped_column(
         Integer,
         default=0,
         nullable=False,
-    )
-
-    seo_score: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
     )
 
     analyzed_at: Mapped[datetime] = mapped_column(
