@@ -93,7 +93,7 @@ def build_story(result):
         ["Internal Links", result.seo.internal_links],
         ["External Links", result.seo.external_links],
         ["Language", result.seo.language],
-        ["Canonical", str(result.seo.has_canonical)],
+        ["Canonical", "Yes" if result.seo.has_canonical else "No"],
     ]
     
     table = Table(
@@ -125,13 +125,40 @@ def build_story(result):
             SECTION_STYLE,
         )
     )
-    for check in result.seo.passed_checks:
+
+    passed_checks = []
+
+    if result.seo.title:
+        passed_checks.append("Title exists")
+
+    if result.seo.h1_count == 1:
+        passed_checks.append("Exactly one H1 heading")
+
+    if result.seo.images_without_alt == 0:
+        passed_checks.append("All images have alt text")
+
+    if result.seo.language:
+        passed_checks.append("Language is specified")
+
+    if result.seo.has_canonical:
+        passed_checks.append("Canonical tag exists")
+
+    if passed_checks:
+        for check in passed_checks:
+            story.append(
+                Paragraph(
+                    "✔ " + check,
+                    NORMAL_STYLE,
+                )
+            )
+    else:
         story.append(
             Paragraph(
-                "✔ " + check,
+                "No passed checks.",
                 NORMAL_STYLE,
             )
         )
+
     story.append(Spacer(1, 20))
 
     # ----------------------------
@@ -143,13 +170,41 @@ def build_story(result):
             SECTION_STYLE,
         )
     )
-    for check in result.seo.failed_checks:
+
+    failed_checks = []
+
+    if not result.seo.title:
+        failed_checks.append("Title is missing")
+    elif not (30 <= result.seo.title_length <= 60):
+        failed_checks.append("Title length should be between 30 and 60 characters")
+
+    if not result.seo.meta_description:
+        failed_checks.append("Meta description is missing")
+    elif not (120 <= result.seo.meta_description_length <= 160):
+        failed_checks.append("Meta description should be between 120 and 160 characters")
+
+    if result.seo.word_count < 300:
+        failed_checks.append("Content should contain at least 300 words")
+
+    if not result.seo.has_canonical:
+        failed_checks.append("Canonical tag is missing")
+
+    if failed_checks:
+        for check in failed_checks:
+            story.append(
+                Paragraph(
+                    "✘ " + check,
+                    NORMAL_STYLE,
+                )
+            )
+    else:
         story.append(
             Paragraph(
-                "✘ " + check,
+                "No failed checks.",
                 NORMAL_STYLE,
             )
         )
+
     story.append(Spacer(1, 20))
 
     # ----------------------------

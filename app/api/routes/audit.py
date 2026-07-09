@@ -1,3 +1,5 @@
+from app.response_schemas.audit import AuditDashboard
+from app.schemas import AuditResult
 from fastapi import (
     APIRouter,
     Depends,
@@ -5,10 +7,12 @@ from fastapi import (
     Response,
     status,
 )
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 from app.api.deps import get_db
 from app.models.audit import Audit
+from app.models.page import Page  #  Correct location
+# Ensure Page model is imported for options
 from app.schemas import (
     AuditDetail,
     AuditRequest,
@@ -16,6 +20,12 @@ from app.schemas import (
     AuditSummary,
 )
 from app.services.audit_service import AuditService
+from sqlalchemy.orm import joinedload
+
+from app.models.page import Page
+from app.response_schemas import AuditDetailResponse
+from fastapi.responses import FileResponse
+from app.services.pdf_service import PDFService
 
 router = APIRouter()
 
@@ -46,7 +56,7 @@ def create_audit(
 
 @router.get(
     "/",
-    response_model=list[AuditSummary],
+    response_model=list[AuditDashboard],
 )
 def get_audits(
     db: Session = Depends(get_db),
@@ -64,25 +74,32 @@ def get_audits(
 
 @router.get(
     "/{audit_id}",
-    response_model=AuditDetail,
+    response_model=AuditDetailResponse,
 )
 def get_audit(
     audit_id: int,
     db: Session = Depends(get_db),
 ):
     """
-    Return a single audit.
+    Return a single audit with pages, SEO analysis, and AI recommendations.
     """
+
     audit = (
         db.query(Audit)
+        .options(
+            joinedload(Audit.pages).joinedload(Page.seo_analysis),
+            joinedload(Audit.pages).joinedload(Page.recommendation),
+        )
         .filter(Audit.id == audit_id)
         .first()
     )
+
     if audit is None:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
+            status_code=404,
             detail="Audit not found",
         )
+
     return audit
 
 
@@ -110,3 +127,53 @@ def delete_audit(
     db.delete(audit)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@router.get("/{audit_id}/report")
+def download_report(
+    audit_id: int,
+    db: Session = Depends(get_db),
+):
+    audit = (
+        db.query(Audit)
+        .options(
+            joinedload(Audit.pages)
+            .joinedload(Page.seo_analysis),
+            joinedload(Audit.pages)
+            .joinedload(Page.recommendation),
+        )
+        .filter(Audit.id == audit_id)
+        .first()
+    )
+
+    if audit is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Audit not found",
+        )
+
+    if not audit.pages:
+        raise HTTPException(
+            status_code=404,
+            detail="No pages found for this audit",
+        )
+
+    result = AuditResult(
+        page=audit.pages[0],
+        seo=audit.pages[0].seo_analysis,
+        recommendation=audit.pages[0].recommendation,
+    )
+
+    pdf_service = PDFService()
+
+    filename = f"audit_{audit.id}.pdf"
+
+    pdf_service.generate(
+        result=result,
+        filename=filename,
+    )
+
+    return FileResponse(
+        filename,
+        media_type="application/pdf",
+        filename=filename,
+    )

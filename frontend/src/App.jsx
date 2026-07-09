@@ -1,10 +1,18 @@
+import { Routes, Route } from "react-router-dom";
+
+import Dashboard from "./pages/Dashboard";
+import AuditDetails from "./pages/AuditDetails";
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-blue-600">
-        AI SEO Audit Platform 🚀
-      </h1>
-    </div>
+    <Routes>
+      <Route path="/" element={<Dashboard />} />
+
+      <Route
+        path="/audits/:id"
+        element={<AuditDetails />}
+      />
+    </Routes>
   );
 }
 
