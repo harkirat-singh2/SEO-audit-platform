@@ -1,0 +1,22 @@
+services:
+
+  backend:
+    build: .
+    container_name: seo-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: seo-frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    restart: unless-stopped

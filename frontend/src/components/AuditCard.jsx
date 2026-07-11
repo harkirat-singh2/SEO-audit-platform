@@ -10,7 +10,7 @@ import {
 
 export default function AuditCard({ audit }) {
   function getStatusIcon() {
-    switch (audit.status.toLowerCase()) {
+    switch (audit.status?.toLowerCase()) {
       case "completed":
         return <CheckCircle2 className="text-green-600" size={18} />;
 
@@ -23,7 +23,7 @@ export default function AuditCard({ audit }) {
   }
 
   function getStatusColor() {
-    switch (audit.status.toLowerCase()) {
+    switch (audit.status?.toLowerCase()) {
       case "completed":
         return "bg-green-100 text-green-700";
 
@@ -34,6 +34,16 @@ export default function AuditCard({ audit }) {
         return "bg-red-100 text-red-700";
     }
   }
+
+  // Format the audit initialization timestamp
+  const formattedDate = new Date(audit.started_at + "Z").toLocaleString(
+  "en-IN",
+  {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+  }
+);
 
   return (
     <div
@@ -50,26 +60,16 @@ export default function AuditCard({ audit }) {
       "
     >
       <div className="flex justify-between items-start">
-
         <div>
-
           <div className="flex items-center gap-3">
-
-            <Globe
-              className="text-blue-600"
-              size={22}
-            />
-
+            <Globe className="text-blue-600" size={22} />
             <h2 className="font-bold text-xl">
               {audit.website_url}
             </h2>
-
           </div>
 
           <div className="mt-5 flex items-center gap-2">
-
             {getStatusIcon()}
-
             <span
               className={`
                 px-3
@@ -82,17 +82,12 @@ export default function AuditCard({ audit }) {
             >
               {audit.status}
             </span>
-
           </div>
 
           <div className="flex items-center gap-2 mt-5 text-gray-500">
-
             <CalendarDays size={18} />
-
-            {new Date(audit.started_at).toLocaleString()}
-
+            <span>{formattedDate}</span>
           </div>
-
         </div>
 
         <Link
@@ -107,11 +102,8 @@ export default function AuditCard({ audit }) {
           "
         >
           View Details
-
           <ArrowRight size={18} />
-
         </Link>
-
       </div>
     </div>
   );
