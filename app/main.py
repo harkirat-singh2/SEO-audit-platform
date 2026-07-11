@@ -10,10 +10,13 @@ from app.database.session import engine
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Create all database tables if they don't exist
-    Base.metadata.create_all(bind=engine)
-    yield
 
+    from app.models.audit import Audit
+    from app.models.page import Page
+
+    Base.metadata.create_all(bind=engine)
+
+    yield
 
 app = FastAPI(
     title="AI SEO Audit Platform",
