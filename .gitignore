@@ -1,21 +1,30 @@
-# Python
+# Python artifacts
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
 
-# Virtual Environment
+# Virtual environments
 .venv/
 venv/
+ENV/
+env/
 
-# Cache
+# IDEs and editors
+.vscode/
+.idea/
+
+# Local configuration and environment variables
+.env
+*.local
+
+# Caches and logs
 .cache/
 *.log
 
-# VS Code
-.vscode/
-
-# Environment
-.env
-
-# Database
+# Databases
 *.db
+*.sqlite3
+
+# Generated audit reports
+audit_*.pdf

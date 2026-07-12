@@ -1,38 +1,17 @@
-from google import genai
-from google.genai import types
-from app.core.logger import logger
-from app.core.config import settings
 import time
-
-start = time.perf_counter()
-
-response = ...
-
-elapsed = time.perf_counter() - start
-
-logger.info(
-    "Gemini responded in %.2f seconds",
-    elapsed,
-)
+from openai import OpenAI
+from app.core.config import settings
+from app.core.logger import logger
 
 class LLMService:
     """
-    Handles communication with Gemini.
+    Handles communication with OpenRouter using the OpenAI SDK client.
     """
-
     def __init__(self):
-        self.client = None
-
-    def get_client(self):
-        """
-        Lazily create the Gemini client.
-        """
-        if self.client is None:
-            self.client = genai.Client(
-                api_key=settings.GEMINI_API_KEY,
-            )
-
-        return self.client
+        self.client = OpenAI(
+        api_key=settings.OPENROUTER_API_KEY,
+        base_url="https://openrouter.ai/api/v1",
+)
 
     def generate(
         self,
@@ -40,32 +19,36 @@ class LLMService:
         response_schema: dict | None = None,
     ) -> str:
         """
-        Generate content using Gemini.
+        Generate content using OpenRouter.
         """
-
-        client = self.get_client()
-
-        config = None
-
-        if response_schema is not None:
-            config = types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=response_schema,
-            )
-
         try:
-            logger.info("Sending prompt to Gemini")
+            logger.info("Sending prompt to OpenRouter")
+            start = time.perf_counter()
 
-            response = client.models.generate_content(
-                model=settings.GEMINI_MODEL,
-                contents=prompt,
-                config=config,
+            response = self.client.chat.completions.create(
+                model=settings.OPENROUTER_MODEL,
+                messages=[
+                    {
+                        "role": "system",
+                        "content": (
+                            "You are an expert SEO consultant. "
+                            "Always return valid JSON only."
+                        ),
+                    },
+                    {
+                        "role": "user",
+                        "content": prompt,
+                    },
+                ],
+                temperature=0.2,
             )
 
-            logger.info("Received response from Gemini")
-
-            return response.text
+            elapsed = time.perf_counter() - start
+            logger.info("OpenRouter responded in %.2f seconds", elapsed)
+            
+            # Fixed: Correctly indexing the first choice from the response array
+            return response.choices[0].message.content
 
         except Exception:
-            logger.exception("Gemini request failed")
+            logger.exception("OpenRouter request failed")
             raise

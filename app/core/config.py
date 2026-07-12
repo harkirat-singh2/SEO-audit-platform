@@ -8,8 +8,8 @@ class Settings(BaseSettings):
 
     DATABASE_URL: str
     MAX_AI_RECOMMENDATIONS: int = 1
-    GEMINI_MODEL: str = "gemini-2.0-flash"
-    GEMINI_API_KEY: str
+    OPENROUTER_API_KEY: str
+    OPENROUTER_MODEL: str = "deepseek/deepseek-chat-v3"
 
     model_config = SettingsConfigDict(
         env_file=".env",
