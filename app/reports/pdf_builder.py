@@ -218,30 +218,36 @@ def build_story(result):
             )
         )
         
-        recommendations = [
-            result.recommendation.meta_title,
-            result.recommendation.meta_description,
-            result.recommendation.heading_structure,
-            result.recommendation.image_alt_text_recommendation,
-            result.recommendation.link_recommendation,
-            result.recommendation.page_speed_suggestion,
-            result.recommendation.mobile_optimization_suggestion,
-            result.recommendation.crawl_delay_suggestion,
-        ]
-        
-        recommendations = [
-            r for r in recommendations if r and r.strip() != "No changes required."
-        ]
-        
-        if recommendations:
-            for recommendation in recommendations:
+        recommendations = {
+            "Meta Title": result.recommendation.meta_title,
+            "Meta Description": result.recommendation.meta_description,
+            "Heading Structure": result.recommendation.heading_structure,
+            "Image Alt Text": result.recommendation.image_alt_text_recommendation,
+            "Link Recommendation": result.recommendation.link_recommendation,
+            "Page Speed": result.recommendation.page_speed_suggestion,
+            "Mobile Optimization": result.recommendation.mobile_optimization_suggestion,
+            "Crawl Delay": result.recommendation.crawl_delay_suggestion,
+        }
+
+        has_recommendation = False
+
+        for title, text in recommendations.items():
+            if (
+                text
+                and text.strip().lower() not in (
+                    "no changes required",
+                    "no changes required.",
+                )
+            ):
+                has_recommendation = True
                 story.append(
                     Paragraph(
-                        "• " + recommendation,
+                        f"<b>{title}:</b> {text}",
                         NORMAL_STYLE,
                     )
                 )
-        else:
+
+        if not has_recommendation:
             story.append(
                 Paragraph(
                     "No additional recommendations.",

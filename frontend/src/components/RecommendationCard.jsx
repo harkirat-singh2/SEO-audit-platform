@@ -4,10 +4,13 @@ export default function RecommendationCard({ recommendation }) {
     return <EmptyCardMessage />;
   }
 
-  // 2. Extract entries, sanitize values, and filter out negative responses safely
-  const recommendations = Object.entries(recommendation)
-    .map(([key, value]) => [key, String(value ?? '').trim()])
-    .filter(([_, val]) => val && !val.toLowerCase().startsWith("no changes required"));
+  // 2. Extract entries and filter out "no changes required" using case-insensitive checks
+  const items = Object.entries(recommendation ?? {}).filter(
+    ([_, value]) =>
+      value &&
+      value.trim().toLowerCase() !== "no changes required" &&
+      value.trim().toLowerCase() !== "no changes required."
+  );
 
   return (
     <div className="bg-white rounded-xl shadow p-6 mt-6">
@@ -15,18 +18,18 @@ export default function RecommendationCard({ recommendation }) {
         AI Recommendations
       </h2>
 
-      {recommendations.length === 0 ? (
+      {items.length === 0 ? (
         <p className="text-gray-500">No recommendations.</p>
       ) : (
         <ul className="space-y-4">
-          {recommendations.map(([key, value]) => (
-            <li key={key} className="text-gray-700">
-              <strong className="text-sm font-semibold text-gray-900 block mb-1">
+          {items.map(([key, value]) => (
+            <li key={key} className="flex gap-2 text-gray-700">
+              <span className="font-semibold text-gray-900 whitespace-nowrap">
                 {key
                   .replaceAll("_", " ")
-                  .replace(/\b\w/g, (c) => c.toUpperCase())}
-              </strong>
-              <p className="leading-relaxed">{value}</p>
+                  .replace(/\b\w/g, c => c.toUpperCase())}:
+              </span>
+              <span>{value}</span>
             </li>
           ))}
         </ul>
