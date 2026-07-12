@@ -2,8 +2,10 @@ import { Download } from "lucide-react";
 
 export default function DownloadButton({ auditId }) {
   function downloadReport() {
+    const apiUrl = import.meta.env.VITE_API_URL;
+
     window.open(
-      `http://127.0.0.1:8000/audits/${auditId}/report`,
+      `${apiUrl}/audits/${auditId}/report`,
       "_blank"
     );
   }
