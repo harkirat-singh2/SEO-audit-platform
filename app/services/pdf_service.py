@@ -1,7 +1,5 @@
 from pathlib import Path
-
 from reportlab.platypus import SimpleDocTemplate
-
 from app.reports.pdf_builder import build_story
 
 
@@ -14,6 +12,8 @@ class PDFService:
     ) -> str:
 
         output = Path(filename)
+
+        print("Saving PDF:", output.resolve())
 
         document = SimpleDocTemplate(
             str(output),

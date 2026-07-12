@@ -8,11 +8,9 @@ from fastapi import (
     status,
 )
 from sqlalchemy.orm import Session, joinedload
-
 from app.api.deps import get_db
 from app.models.audit import Audit
-from app.models.page import Page  #  Correct location
-# Ensure Page model is imported for options
+from app.models.page import Page  # Correct location # Ensure Page model is imported for options
 from app.schemas import (
     AuditDetail,
     AuditRequest,
@@ -21,7 +19,6 @@ from app.schemas import (
 )
 from app.services.audit_service import AuditService
 from sqlalchemy.orm import joinedload
-
 from app.models.page import Page
 from app.response_schemas import AuditDetailResponse
 from fastapi.responses import FileResponse
@@ -83,7 +80,6 @@ def get_audit(
     """
     Return a single audit with pages, SEO analysis, and AI recommendations.
     """
-
     audit = (
         db.query(Audit)
         .options(
@@ -93,13 +89,11 @@ def get_audit(
         .filter(Audit.id == audit_id)
         .first()
     )
-
     if audit is None:
         raise HTTPException(
             status_code=404,
             detail="Audit not found",
         )
-
     return audit
 
 
@@ -128,11 +122,16 @@ def delete_audit(
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
+
 @router.get("/{audit_id}/report")
 def download_report(
     audit_id: int,
     db: Session = Depends(get_db),
 ):
+    print("=" * 50)
+    print("PDF REQUESTED")
+    print("Audit ID:", audit_id)
+
     audit = (
         db.query(Audit)
         .options(
@@ -144,34 +143,35 @@ def download_report(
         .filter(Audit.id == audit_id)
         .first()
     )
-
     if audit is None:
         raise HTTPException(
             status_code=404,
             detail="Audit not found",
         )
-
     if not audit.pages:
         raise HTTPException(
             status_code=404,
             detail="No pages found for this audit",
         )
 
+    print("Website:", audit.website_url)
+    print("Page:", audit.pages[0].url)
+    print("Score:", audit.pages[0].seo_analysis.seo_score)
+
     result = AuditResult(
         page=audit.pages[0],
         seo=audit.pages[0].seo_analysis,
         recommendation=audit.pages[0].recommendation,
     )
-
     pdf_service = PDFService()
-
     filename = f"audit_{audit.id}.pdf"
+
+    print("Generating:", filename)
 
     pdf_service.generate(
         result=result,
         filename=filename,
     )
-
     return FileResponse(
         filename,
         media_type="application/pdf",
