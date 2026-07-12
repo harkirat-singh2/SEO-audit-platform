@@ -3,19 +3,11 @@ import { Download } from "lucide-react";
 export default function DownloadButton({ auditId }) {
   function downloadReport() {
     const apiUrl = import.meta.env.VITE_API_URL;
+    const url = `${apiUrl}/audits/${auditId}/report`;
+    console.log("Opening:", url);
     
-    // Temporarily add logging
-    console.log("Audit ID:", auditId);
-    console.log(
-      "Downloading:", 
-      `${apiUrl}/audits/${auditId}/report?t=${Date.now()}`
-    );
-
-    // Open link in a new tab with cache-busting timestamp
-    window.open(
-      `${apiUrl}/audits/${auditId}/report?t=${Date.now()}`,
-      "_blank"
-    );
+    // Instead of opening, redirect the current tab
+    window.location.href = url;
   }
 
   return (
