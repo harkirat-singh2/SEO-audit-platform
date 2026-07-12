@@ -1,4 +1,18 @@
 export default function MetricsTable({ seo }) {
+  if (!seo) {
+    return (
+      <div className="bg-white rounded-xl shadow p-6 mt-6">
+        <h2 className="text-lg font-semibold mb-4">
+          SEO Metrics
+        </h2>
+
+        <p className="text-gray-500">
+          SEO metrics are not available.
+        </p>
+      </div>
+    );
+  }
+
   const metrics = [
     ["Title Length", seo.title_length],
     ["Meta Description Length", seo.meta_description_length],
@@ -22,17 +36,9 @@ export default function MetricsTable({ seo }) {
       <table className="w-full border-collapse">
         <tbody>
           {metrics.map(([label, value]) => (
-            <tr
-              key={label}
-              className="border-b"
-            >
-              <td className="py-3 font-medium">
-                {label}
-              </td>
-
-              <td className="py-3 text-right">
-                {String(value)}
-              </td>
+            <tr key={label} className="border-b">
+              <td className="py-3 font-medium">{label}</td>
+              <td className="py-3 text-right">{String(value)}</td>
             </tr>
           ))}
         </tbody>
