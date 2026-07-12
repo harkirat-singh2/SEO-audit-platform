@@ -6,8 +6,6 @@ An AI-powered SEO auditing platform that crawls websites, performs comprehensive
 
 ## 📸 Screenshots
 
-> *(Add screenshots after completing the project.)*
-
 | Dashboard | Audit Details |
 |-----------|---------------|
 | ![](images/dashboard.png) | ![](images/audit-details.png) |
