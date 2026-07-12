@@ -1,5 +1,16 @@
 # 🚀 AI-Powered Website SEO Audit Platform
 
+# 🚀 AI-Powered Website SEO Audit Platform
+
+![Python](https://img.shields.io/badge/Python-3.13-blue?logo=python)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.116-green?logo=fastapi)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-4-38BDF8?logo=tailwindcss)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?logo=sqlite)
+![OpenRouter](https://img.shields.io/badge/OpenRouter-LLM-purple)
+![Docker](https://img.shields.io/badge/Docker-Container-blue?logo=docker)
+![License](https://img.shields.io/badge/License-MIT-green)
+
 An AI-powered SEO auditing platform that crawls websites, performs comprehensive SEO analysis, generates AI-based optimization recommendations using OpenRouter LLMs, and exports professional PDF reports.
 
 ---
