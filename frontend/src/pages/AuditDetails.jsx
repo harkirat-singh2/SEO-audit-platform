@@ -14,9 +14,10 @@ export default function AuditDetails() {
   const [audit, setAudit] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Fix: Added 'id' to the dependency array to refetch if the URL changes
   useEffect(() => {
     fetchAudit();
-  }, []);
+  }, [id]);
 
   async function fetchAudit() {
     try {
@@ -78,7 +79,8 @@ export default function AuditDetails() {
 
           {/* Full-width Actions / Download Button Section */}
           <div className="border-t border-slate-100 pt-2">
-            <DownloadButton auditId={audit?.id} />
+            {/* Fallback to URL 'id' if 'audit.id' hasn't populated yet */}
+            <DownloadButton auditId={audit?.id || id} />
           </div>
         </div>
       </main>

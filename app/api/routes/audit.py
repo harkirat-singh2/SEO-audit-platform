@@ -1,3 +1,5 @@
+import logging
+import os
 from app.response_schemas.audit import AuditDashboard
 from app.schemas import AuditResult
 from fastapi import (
@@ -18,11 +20,12 @@ from app.schemas import (
     AuditSummary,
 )
 from app.services.audit_service import AuditService
-from sqlalchemy.orm import joinedload
-from app.models.page import Page
 from app.response_schemas import AuditDetailResponse
 from fastapi.responses import FileResponse
 from app.services.pdf_service import PDFService
+
+# Initialize the standard logger for this module
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -128,9 +131,8 @@ def download_report(
     audit_id: int,
     db: Session = Depends(get_db),
 ):
-    print("=" * 50)
-    print("PDF REQUESTED")
-    print("Audit ID:", audit_id)
+    # Added Logger statements
+    logger.info("PDF REQUESTED")
 
     audit = (
         db.query(Audit)
@@ -154,9 +156,11 @@ def download_report(
             detail="No pages found for this audit",
         )
 
-    print("Website:", audit.website_url)
-    print("Page:", audit.pages[0].url)
-    print("Score:", audit.pages[0].seo_analysis.seo_score)
+    # Core audit verification logs
+    logger.info("Audit ID: %s", audit.id)
+    logger.info("Website: %s", audit.website_url)
+    logger.info("Page: %s", audit.pages[0].url)
+    logger.info("Score: %s", audit.pages[0].seo_analysis.seo_score)
 
     result = AuditResult(
         page=audit.pages[0],
@@ -166,7 +170,14 @@ def download_report(
     pdf_service = PDFService()
     filename = f"audit_{audit.id}.pdf"
 
-    print("Generating:", filename)
+    # Absolute path log injection
+    logger.info(
+        "Saving PDF: %s",
+        os.path.abspath(filename),
+    )
+
+    # Log statement right before generating
+    logger.info("Generating: %s", filename)
 
     pdf_service.generate(
         result=result,
