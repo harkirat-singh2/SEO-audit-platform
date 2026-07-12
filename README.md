@@ -301,8 +301,6 @@ Backend Developer | Python | FastAPI | AI Applications
 GitHub:https://github.com/harkirat-singh2
 
 LinkedIn:https://www.linkedin.com/in/harkiratsingh11/
-(Add your LinkedIn profile)
-
 ---
 
 # ⭐ If you like this project
